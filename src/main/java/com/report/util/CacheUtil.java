@@ -11,10 +11,10 @@ import java.util.concurrent.TimeUnit;
 public class CacheUtil {
 
 
-
-    public static Cache<String,String> cachedAuthToken = CacheBuilder.newBuilder().maximumSize(10)
+    public static Cache<String,String> cachedAuthToken = CacheBuilder.newBuilder().maximumSize(2)
                                                                                   .expireAfterWrite(10, TimeUnit.MINUTES)
                                                                                   .build();
+
 
     public void clearAll() {
         if(cachedAuthToken != null)

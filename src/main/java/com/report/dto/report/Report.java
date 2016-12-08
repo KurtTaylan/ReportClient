@@ -3,12 +3,12 @@ package com.report.dto.report;
 public class Report {
 
     private String status;
-    private Response response;
+    private Response[] response;
 
     public Report() {
     }
 
-    public Report(String status, Response response) {
+    public Report(String status, Response[] response) {
         this.status = status;
         this.response = response;
     }
@@ -21,11 +21,11 @@ public class Report {
         this.status = status;
     }
 
-    public Response getResponse() {
+    public Response[] getResponse() {
         return response;
     }
 
-    public void setResponse(Response response) {
+    public void setResponse(Response[] response) {
         this.response = response;
     }
 }

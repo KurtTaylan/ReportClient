@@ -4,6 +4,7 @@ import com.report.AbstractReportClientTest;
 import com.report.dto.login.User;
 import com.report.dto.report.Report;
 import com.report.dto.report.ReportCriterias;
+import com.report.stab.ReportClientStab;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -15,8 +16,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  *  <p>
  *  Test cases:
  *  <p>
- *  TC1- login successful
- *  TC2- login fail
+ *  TC1- Login successful - Happy path
+ *  TC2- Login fail
+ *  TC3- Make report  - Happy path
  *  <p>
  */
 public class ReportClientServiceTest extends AbstractReportClientTest {
@@ -26,7 +28,7 @@ public class ReportClientServiceTest extends AbstractReportClientTest {
     @Test
     public void testLoginSuccess(){
         User backdoorUser = new User("","");
-        Optional<String> validToken = reportClientService.login(backdoorUser);            // Backdoor: If you leave it blank than service uses valid credentials for testing purposes.
+        Optional<String> validToken = reportClientService.login(backdoorUser);                                           // Backdoor: If you leave it blank than service uses valid credentials for testing purposes.
 
         assertThat(validToken.isPresent()).isTrue();
     }
@@ -42,11 +44,13 @@ public class ReportClientServiceTest extends AbstractReportClientTest {
 
 
     @Test
-    public void testReport(){
-        ReportCriterias criterias = new ReportCriterias();
+    public void testMakeReport(){
+        testLoginSuccess();
+        ReportCriterias criterias = ReportClientStab.createSampleReportCriterias();
         Optional<Report> report = reportClientService.makeReport(criterias);
 
-
+        assertThat(report).isNotNull();
+        assertThat(report.get().getStatus()).isEqualTo("APPROVED");
     }
 
 
