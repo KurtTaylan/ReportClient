@@ -1,0 +1,8 @@
+report:
+  service:
+    url: https://testreportingapi.clearsettle.com
+  test:
+    user:
+      email: demo@bumin.com.tr
+      password: cjaiU8CV
+
