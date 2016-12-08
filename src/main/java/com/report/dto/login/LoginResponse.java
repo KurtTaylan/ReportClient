@@ -1,4 +1,4 @@
-package com.report.dto;
+package com.report.dto.login;
 
 /**
  * Created by taylan on 07.12.2016.

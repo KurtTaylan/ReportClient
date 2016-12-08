@@ -8,7 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>reportClient</name>
+    <email>reportClient</email>
     <description>Client project for Reporting API</description>
 
     <parent>

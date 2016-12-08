@@ -1,50 +1,46 @@
 package com.report.controller;
 
+import com.report.dto.login.User;
 import com.report.service.ReportClientService;
-import org.apache.commons.lang3.StringUtils;
+import com.report.util.CacheUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
 public class ReportClientController {
 
+
+
     @Autowired
     ReportClientService reportClientService;
 
 
-    private final Map<String, List<String>> userDb = new HashMap<>();
 
+    @RequestMapping(value = "login", method = RequestMethod.POST)
+    public ResponseEntity<String> login(@RequestParam(value = "email", defaultValue ="") String email,
+                                        @RequestParam(value = "password", defaultValue ="") String password, HttpServletResponse response) throws ServletException {
 
+        User loginUser = new User(email,password);
+        Optional<String> userToken = reportClientService.login(loginUser);
 
-    public ReportClientController() {
-        userDb.put("tom", Arrays.asList("user"));
-        userDb.put("sally", Arrays.asList("user", "admin"));
-    }
-
-
-    @RequestMapping(value = "login", method = RequestMethod.GET)
-    public ResponseEntity<String> login(HttpServletResponse response) throws ServletException {
-
-        String userToken = reportClientService.login();
-
-        if (StringUtils.isBlank(userToken))
-          return   new ResponseEntity<String>(HttpStatus.UNAUTHORIZED);
-
-        response.addCookie(new Cookie("Authorization", userToken));
-        return new ResponseEntity<String>(HttpStatus.OK);
+        if (userToken.isPresent()) {
+            String token = userToken.get();
+            response.addCookie(new Cookie("Authorization", token));
+            CacheUtil.cachedAuthToken.put(loginUser.getEmail(), token);
+            return new ResponseEntity<String>(HttpStatus.OK);
+        }else
+            return new ResponseEntity<String>(HttpStatus.UNAUTHORIZED);
     }
 
 

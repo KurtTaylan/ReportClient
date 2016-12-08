@@ -1,7 +1,12 @@
 package com.report.service;
 
 import com.report.AbstractReportClientTest;
+import com.report.dto.login.User;
+import com.report.dto.report.Report;
+import com.report.dto.report.ReportCriterias;
 import org.junit.Test;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,16 +25,28 @@ public class ReportClientServiceTest extends AbstractReportClientTest {
 
     @Test
     public void testLoginSuccess(){
-        String login = reportClientService.login();
+        User backdoorUser = new User("","");
+        Optional<String> validToken = reportClientService.login(backdoorUser);            // Backdoor: If you leave it blank than service uses valid credentials for testing purposes.
 
-        assertThat(login).isNotNull();
+        assertThat(validToken.isPresent()).isTrue();
     }
 
-    @Test
-    public void testLoginFail(){
-        String login = reportClientService.login();
 
-        assertThat(login).isNull();
+    @Test()
+    public void testLoginFail(){
+        User fakeUser = new User("fakesample@gmail.com","fail it");
+        Optional<String> validToken = reportClientService.login(fakeUser);
+
+        assertThat(validToken.isPresent()).isFalse();
+    }
+
+
+    @Test
+    public void testReport(){
+        ReportCriterias criterias = new ReportCriterias();
+        Optional<Report> report = reportClientService.makeReport(criterias);
+
+
     }
 
 

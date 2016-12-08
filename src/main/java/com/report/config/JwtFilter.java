@@ -14,14 +14,12 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class JwtFilter extends GenericFilterBean {
-
 
 
     @Autowired
@@ -55,9 +53,9 @@ public class JwtFilter extends GenericFilterBean {
         String userCachedToken = CacheUtil.cachedAuthToken.getIfPresent(userEmail);
         if (StringUtils.isBlank(userCachedToken)){
 
-            String userNewToken = reportClientService.login();
+           /* String userNewToken = reportClientService.login(email, password);
             CacheUtil.cachedAuthToken.put(userEmail,userNewToken);
-            response.addCookie(new Cookie("Authorization",userNewToken));
+            response.addCookie(new Cookie("Authorization",userNewToken));*/
         }
 
 
