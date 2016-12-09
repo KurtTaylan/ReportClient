@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/user")
 public class ReportClientController {
 
 
@@ -52,7 +51,7 @@ public class ReportClientController {
     }
 
 
-    @RequestMapping(value = "report", method = RequestMethod.POST , consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "transaction", method = RequestMethod.POST , consumes = {MediaType.APPLICATION_JSON_VALUE})
     public @ResponseBody TransactionResult fetchTransaction(@RequestParam String transactionId) throws ServletException {
 
         Optional<TransactionResult> transactionResult = reportClientService.fetchTransaction(transactionId);

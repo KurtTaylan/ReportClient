@@ -47,7 +47,7 @@ public class ReportClient {
     }
 
 
-    public Optional<Report> makeReport(String reportUrl, ReportCriterias criterias, HttpHeaders headers) {
+    public Optional<Report> makeReportWith(String reportUrl, ReportCriterias criterias, HttpHeaders headers) {
         RestTemplate restTemplate = new RestTemplate();
         String requestBody = getReportRequestBody(criterias);
 
@@ -81,7 +81,7 @@ public class ReportClient {
     }
 
 
-    public Optional<TransactionResult> fetchTransaction(String transactionUrl, String transactionId) {
+    public Optional<TransactionResult> fetchTransactionFrom(String transactionUrl, String transactionId) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
 
