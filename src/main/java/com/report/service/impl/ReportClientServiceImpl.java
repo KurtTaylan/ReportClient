@@ -2,13 +2,12 @@ package com.report.service.impl;
 
 import com.report.client.ReportClient;
 import com.report.dto.APIURLs;
-import com.report.dto.CacheEnum;
 import com.report.dto.login.LoginResponse;
 import com.report.dto.login.User;
 import com.report.dto.report.Report;
 import com.report.dto.report.ReportCriterias;
+import com.report.dto.transaction.TransactionResult;
 import com.report.service.ReportClientService;
-import com.report.util.CacheUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class ReportClientServiceImpl implements ReportClientService, Serializabl
     private ReportClient client;
 
     @Autowired
-    HttpSession httpSession;
+    private HttpSession httpSession;
 
     @Value("${report.service.url}")
     private String hostUrl;
@@ -47,6 +46,7 @@ public class ReportClientServiceImpl implements ReportClientService, Serializabl
     private String sampleUserPassword;
 
 
+
     @Override
     public Optional<String> login(User loginUser) {
         String loginUrl = hostUrl + APIURLs.LOGIN.getUrl();
@@ -55,7 +55,8 @@ public class ReportClientServiceImpl implements ReportClientService, Serializabl
         Optional<LoginResponse> loginResponse = client.loginWithCredentials(loginUrl, requestMap);
 
         if (loginResponse.isPresent() && "APPROVED".equals(loginResponse.get().getStatus())) {
-            putCredentialOnCache(loginUser, loginResponse.get().getToken());
+            httpSession.setAttribute("Authorization",loginResponse.get().getToken());
+
             return Optional.ofNullable(loginResponse.get().getToken());
         } else
             return Optional.empty();
@@ -74,11 +75,6 @@ public class ReportClientServiceImpl implements ReportClientService, Serializabl
         return requestMap;
     }
 
-    private void putCredentialOnCache(User loginUser, String token) {
-        CacheUtil.cachedAuthToken.put(CacheEnum.CURRENTUSERMAIL.getCache(), loginUser.getEmail());
-        CacheUtil.cachedAuthToken.put(loginUser.getEmail(), token);
-    }
-
 
     @Override
     public Optional<Report> makeReport(ReportCriterias reportCriterias) {
@@ -87,12 +83,11 @@ public class ReportClientServiceImpl implements ReportClientService, Serializabl
         Optional<Report> report = null;
         if (isMeaningful(reportCriterias)) {
 
-            String ifPresent = CacheUtil.cachedAuthToken.getIfPresent(CacheEnum.CURRENTUSERMAIL.getCache());
-            String cachedUserToken = CacheUtil.cachedAuthToken.getIfPresent(ifPresent);
-            if (cachedUserToken != null) {
+            String authorization = (String) httpSession.getAttribute("Authorization");
+            if (authorization != null) {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
-                headers.set("Authorization", cachedUserToken);
+                headers.set("Authorization", authorization);
 
                 report = client.makeReport(reportUrl, reportCriterias, headers);
             }else
@@ -105,8 +100,7 @@ public class ReportClientServiceImpl implements ReportClientService, Serializabl
         return report;
     }
 
-
-    public boolean isMeaningful(ReportCriterias reportCriterias) {
+    private boolean isMeaningful(ReportCriterias reportCriterias) {
         boolean result = false;
         String fromDate = reportCriterias.getFromDate();
         String toDate = reportCriterias.getToDate();
@@ -116,4 +110,14 @@ public class ReportClientServiceImpl implements ReportClientService, Serializabl
 
         return result;
     }
+
+
+    @Override
+    public Optional<TransactionResult> fetchTransaction(String transactionId) {
+        String transactionUrl = hostUrl + APIURLs.TRANSACTION.getUrl();
+        Optional<TransactionResult> transactionResult = client.fetchTransaction(transactionUrl, transactionId);
+
+        return transactionResult;
+    }
+
 }

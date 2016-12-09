@@ -4,14 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.report.dto.login.LoginResponse;
 import com.report.dto.report.Report;
 import com.report.dto.report.ReportCriterias;
+import com.report.dto.transaction.TransactionResult;
 import com.report.util.JsonConvertUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -23,6 +26,10 @@ public class ReportClient {
 
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+
+    @Autowired
+    private HttpSession session;
 
 
 
@@ -59,6 +66,7 @@ public class ReportClient {
         } catch (JsonProcessingException e) {
             logger.error("Json convert exception: ",e);
         }
+
         return requestBody;
     }
 
@@ -70,5 +78,25 @@ public class ReportClient {
             logger.error("Json convert exception: ",e);
         }
         return report;
+    }
+
+
+    public Optional<TransactionResult> fetchTransaction(String transactionUrl, String transactionId) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String authorization = (String) session.getAttribute("Authorization");
+        headers.set("Authorization", authorization);
+
+        String transactionIdJson = "transactionId: " + "\"" + transactionId + "\"";
+        HttpEntity<String> entity = new HttpEntity<>(transactionIdJson,headers);
+
+        ResponseEntity<TransactionResult> responseEntity = restTemplate.exchange(transactionUrl, HttpMethod.POST,entity,TransactionResult.class);
+
+        if(responseEntity.getStatusCode().equals(HttpStatus.OK))
+            return Optional.ofNullable(responseEntity.getBody());
+        else
+            return Optional.empty();
     }
 }

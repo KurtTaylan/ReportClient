@@ -4,9 +4,11 @@ import com.report.AbstractReportClientTest;
 import com.report.dto.login.User;
 import com.report.dto.report.Report;
 import com.report.dto.report.ReportCriterias;
+import com.report.dto.transaction.TransactionResult;
 import com.report.stab.ReportClientStab;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *  TC1- Login successful - Happy path
  *  TC2- Login fail
  *  TC3- Make report  - Happy path
+ *  TC4-
  *  <p>
  */
 public class ReportClientServiceTest extends AbstractReportClientTest {
@@ -51,6 +54,16 @@ public class ReportClientServiceTest extends AbstractReportClientTest {
 
         assertThat(report).isNotNull();
         assertThat(report.get().getStatus()).isEqualTo("APPROVED");
+    }
+
+
+    @Test
+    public void testFecthTransaction() throws IOException {
+        testLoginSuccess();
+        String transactionId = "1-1444392550-1";
+        Optional<TransactionResult> transactionService = reportClientService.fetchTransaction(transactionId);
+
+        assertThat(transactionService.get().getFx().getMerchant().getOriginalAmount()).isNotNull();
     }
 
 

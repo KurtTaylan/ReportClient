@@ -12,7 +12,6 @@ import java.io.IOException;
 public class JsonConvertUtil {
 
 
-
     private static ObjectMapper MAPPER = null;
 
 
