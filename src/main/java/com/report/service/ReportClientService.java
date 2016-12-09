@@ -15,4 +15,6 @@ public interface ReportClientService {
     Optional<Report> makeReport(ReportCriterias reportCriterias);
 
     Optional<TransactionResult> fetchTransaction(String transactionId);
+
+    Optional<String> listTransactions(String transactionId);
 }

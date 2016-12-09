@@ -89,7 +89,7 @@ public class ReportClientServiceImpl implements ReportClientService, Serializabl
                 headers.setContentType(MediaType.APPLICATION_JSON);
                 headers.set("Authorization", authorization);
 
-                report = client.makeReport(reportUrl, reportCriterias, headers);
+                report = client.makeReportWith(reportUrl, reportCriterias, headers);
             }else
                 throw new IllegalArgumentException("There is no valid token!");
 
@@ -115,9 +115,17 @@ public class ReportClientServiceImpl implements ReportClientService, Serializabl
     @Override
     public Optional<TransactionResult> fetchTransaction(String transactionId) {
         String transactionUrl = hostUrl + APIURLs.TRANSACTION.getUrl();
-        Optional<TransactionResult> transactionResult = client.fetchTransaction(transactionUrl, transactionId);
+        Optional<TransactionResult> transactionResult = client.fetchTransactionFrom(transactionUrl, transactionId);
 
         return transactionResult;
     }
 
+
+    @Override
+    public Optional<String> listTransactions(String transactionId) {
+        String transactionUrl = hostUrl + APIURLs.TRANSACTIONLIST.getUrl();
+        Optional<String> result = client.listTransactionsFrom(transactionUrl, transactionId);
+
+        return result;
+    }
 }

@@ -7,7 +7,9 @@ import com.report.dto.report.ReportCriterias;
 import com.report.dto.transaction.TransactionResult;
 import com.report.stab.ReportClientStab;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -21,11 +23,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  *  TC1- Login successful - Happy path
  *  TC2- Login fail
  *  TC3- Make report  - Happy path
- *  TC4-
+ *  TC4- FetchTransaction - Happy Path
+ *  TC5- List transactions - Happy path
  *  <p>
  */
 public class ReportClientServiceTest extends AbstractReportClientTest {
 
+    @Autowired
+    HttpSession session;
 
 
     @Test
@@ -58,7 +63,7 @@ public class ReportClientServiceTest extends AbstractReportClientTest {
 
 
     @Test
-    public void testFecthTransaction() throws IOException {
+    public void testFetchTransaction() throws IOException {
         testLoginSuccess();
         String transactionId = "1-1444392550-1";
         Optional<TransactionResult> transactionService = reportClientService.fetchTransaction(transactionId);
@@ -67,5 +72,14 @@ public class ReportClientServiceTest extends AbstractReportClientTest {
     }
 
 
+    @Test
+    public void testListTransaction() throws IOException {
+        testLoginSuccess();
+        String transactionId = "529-1438673740-2";//1-1444392550-1";
+
+        Optional<String> result = reportClientService.listTransactions(transactionId);
+
+        assertThat(result).isNotNull();
+    }
 
 }

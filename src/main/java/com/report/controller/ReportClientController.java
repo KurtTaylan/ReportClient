@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/user")
 public class ReportClientController {
 
 
@@ -52,10 +51,22 @@ public class ReportClientController {
     }
 
 
-    @RequestMapping(value = "report", method = RequestMethod.POST , consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "transaction", method = RequestMethod.POST , consumes = {MediaType.APPLICATION_JSON_VALUE})
     public @ResponseBody TransactionResult fetchTransaction(@RequestParam String transactionId) throws ServletException {
 
         Optional<TransactionResult> transactionResult = reportClientService.fetchTransaction(transactionId);
         return transactionResult.get();
     }
+
+
+    @RequestMapping(value = "transactionlist", method = RequestMethod.POST , consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public @ResponseBody String  listTransaction(@RequestParam String transactionId) throws ServletException {
+
+        Optional<String> transactionResult = reportClientService.listTransactions(transactionId);
+
+        return transactionResult.get();
+    }
+
+
+
 }

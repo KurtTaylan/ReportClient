@@ -47,7 +47,7 @@ public class ReportClient {
     }
 
 
-    public Optional<Report> makeReport(String reportUrl, ReportCriterias criterias, HttpHeaders headers) {
+    public Optional<Report> makeReportWith(String reportUrl, ReportCriterias criterias, HttpHeaders headers) {
         RestTemplate restTemplate = new RestTemplate();
         String requestBody = getReportRequestBody(criterias);
 
@@ -81,7 +81,7 @@ public class ReportClient {
     }
 
 
-    public Optional<TransactionResult> fetchTransaction(String transactionUrl, String transactionId) {
+    public Optional<TransactionResult> fetchTransactionFrom(String transactionUrl, String transactionId) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
 
@@ -98,5 +98,22 @@ public class ReportClient {
             return Optional.ofNullable(responseEntity.getBody());
         else
             return Optional.empty();
+    }
+
+
+    public Optional<String> listTransactionsFrom(String transactionUrl, String transactionId) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String authorization = (String) session.getAttribute("Authorization");
+        headers.set("Authorization", authorization);
+
+        String transactionIdJson = "transactionId: " + "\"" + transactionId + "\"";
+        HttpEntity<String> entity = new HttpEntity<>(transactionIdJson,headers);
+
+        ResponseEntity<String> result = restTemplate.exchange(transactionUrl, HttpMethod.POST,entity,String .class);
+
+        return Optional.ofNullable(result.getBody());
     }
 }
