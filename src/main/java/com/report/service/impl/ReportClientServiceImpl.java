@@ -120,4 +120,12 @@ public class ReportClientServiceImpl implements ReportClientService, Serializabl
         return transactionResult;
     }
 
+
+    @Override
+    public Optional<String> listTransactions(String transactionId) {
+        String transactionUrl = hostUrl + APIURLs.TRANSACTIONLIST.getUrl();
+        Optional<String> result = client.listTransactionsFrom(transactionUrl, transactionId);
+
+        return result;
+    }
 }

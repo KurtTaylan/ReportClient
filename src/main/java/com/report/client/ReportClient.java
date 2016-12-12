@@ -99,4 +99,21 @@ public class ReportClient {
         else
             return Optional.empty();
     }
+
+
+    public Optional<String> listTransactionsFrom(String transactionUrl, String transactionId) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String authorization = (String) session.getAttribute("Authorization");
+        headers.set("Authorization", authorization);
+
+        String transactionIdJson = "transactionId: " + "\"" + transactionId + "\"";
+        HttpEntity<String> entity = new HttpEntity<>(transactionIdJson,headers);
+
+        ResponseEntity<String> result = restTemplate.exchange(transactionUrl, HttpMethod.POST,entity,String .class);
+
+        return Optional.ofNullable(result.getBody());
+    }
 }

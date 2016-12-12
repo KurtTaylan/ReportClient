@@ -57,4 +57,16 @@ public class ReportClientController {
         Optional<TransactionResult> transactionResult = reportClientService.fetchTransaction(transactionId);
         return transactionResult.get();
     }
+
+
+    @RequestMapping(value = "transactionlist", method = RequestMethod.POST , consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public @ResponseBody String  listTransaction(@RequestParam String transactionId) throws ServletException {
+
+        Optional<String> transactionResult = reportClientService.listTransactions(transactionId);
+
+        return transactionResult.get();
+    }
+
+
+
 }
